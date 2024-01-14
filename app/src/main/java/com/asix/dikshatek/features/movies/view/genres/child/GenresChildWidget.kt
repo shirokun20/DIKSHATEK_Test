@@ -36,6 +36,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.asix.dikshatek.components.config.NavConfig
 import com.asix.dikshatek.components.constants.RouteConst
 import com.asix.dikshatek.components.widget.LoadingWidget
+import com.asix.dikshatek.features.movies.model.genres.GenreModel
 import com.asix.dikshatek.features.movies.state.GenresState
 import com.asix.dikshatek.features.movies.viewModel.genresVM.GenresViewModel
 
@@ -45,16 +46,14 @@ fun GenresChildWidget(innerPadding: PaddingValues, vm: GenresViewModel = viewMod
     val state: State<GenresState> = vm.state
     val isRefreshing by vm.isRefreshing.collectAsState()
     val pullRefreshState = rememberPullRefreshState(isRefreshing, { vm.onRefresh() })
-    val nav = NavConfig.getNavController()
-
     Box(
         modifier = Modifier
             .pullRefresh(pullRefreshState)
-    ) {
+            .padding(innerPadding),
+        ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding),
         ) {
             when (val currentState = state.value) {
                 is GenresState.Loading -> {
@@ -83,31 +82,7 @@ fun GenresChildWidget(innerPadding: PaddingValues, vm: GenresViewModel = viewMod
                                 )
                         ) {
                             currentState.data.forEach { res ->
-                                Box(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .border(
-                                            border = BorderStroke(1.dp, Color(0xFFEBEEF4)),
-                                            shape = RoundedCornerShape(10.dp)
-                                        )
-                                        .background(
-                                            color = Color.White,
-                                            shape = RoundedCornerShape(10.dp)
-                                        )
-                                        .clip(shape = RoundedCornerShape(10.dp))
-                                        .clickable(onClick = {
-                                            nav.navigate("${RouteConst.movieByGenreScreen}/${res.id}/${res.name}", navOptions = null)
-                                        })
-                                        .padding(15.dp),
-                                ) {
-                                    Text(
-                                        res.name, style = TextStyle(
-                                            fontSize = 15.sp,
-                                            color = Color(0xFF000000),
-                                        )
-                                    )
-                                }
-                                Spacer(modifier = Modifier.height(10.dp))
+                                GenreItem(res)
                             }
                         }
 
@@ -117,7 +92,7 @@ fun GenresChildWidget(innerPadding: PaddingValues, vm: GenresViewModel = viewMod
                 is GenresState.Error -> {
                     Box(modifier = Modifier.fillMaxWidth()) {
                         Column(
-                            modifier = Modifier.fillMaxWidth(),
+                            modifier = Modifier.fillMaxWidth().padding(horizontal = 30.dp),
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             Spacer(modifier = Modifier.height(20.dp))
@@ -143,4 +118,34 @@ fun GenresChildWidget(innerPadding: PaddingValues, vm: GenresViewModel = viewMod
             ),
         )
     }
+}
+
+@Composable
+fun GenreItem(res: GenreModel) {
+    val nav = NavConfig.getNavController()
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .border(
+                border = BorderStroke(1.dp, Color(0xFFEBEEF4)),
+                shape = RoundedCornerShape(10.dp)
+            )
+            .background(
+                color = Color.White,
+                shape = RoundedCornerShape(10.dp)
+            )
+            .clip(shape = RoundedCornerShape(10.dp))
+            .clickable(onClick = {
+                nav.navigate("${RouteConst.movieByGenreScreen}/${res.id}/${res.name}", navOptions = null)
+            })
+            .padding(15.dp),
+    ) {
+        Text(
+            res.name, style = TextStyle(
+                fontSize = 15.sp,
+                color = Color(0xFF000000),
+            )
+        )
+    }
+    Spacer(modifier = Modifier.height(10.dp))
 }

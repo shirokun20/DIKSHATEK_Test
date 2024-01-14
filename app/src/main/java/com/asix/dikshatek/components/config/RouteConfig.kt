@@ -7,7 +7,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.asix.dikshatek.components.constants.RouteConst
 import com.asix.dikshatek.features.movies.view.genres.GenresView
-import com.asix.dikshatek.features.movies.view.movieByGenre.MovieByGenreView
+import com.asix.dikshatek.features.movies.view.movieDetail.MovieDetailView
+import com.asix.dikshatek.features.movies.view.moviesByGenre.MovieByGenreView
 
 @Composable
 fun RouteConfig() {
@@ -27,6 +28,16 @@ fun RouteConfig() {
             ),
         ) { entry ->
             MovieByGenreView(entry)
+        }
+
+        composable(
+            route = "${RouteConst.movieDetailScreen}/{id}/{name}",
+            arguments = listOf(
+                navArgument("id") { type = NavType.StringType },
+                navArgument("name") { type = NavType.StringType },
+            ),
+        ) { entry ->
+            MovieDetailView(entry)
         }
     }
 }

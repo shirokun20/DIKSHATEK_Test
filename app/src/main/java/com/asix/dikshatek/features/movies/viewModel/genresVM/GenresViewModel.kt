@@ -28,10 +28,10 @@ class GenresViewModel : ViewModel() {
         fetchGenres()
     }
 
-    fun fetchGenres() {
+    private fun fetchGenres() {
         viewModelScope.launch {
             val res = repository.getGenres()
-            _fetchGenres(res)
+            fetchGenresResult(res)
             _isRefreshing.value = false
         }
     }
@@ -42,10 +42,10 @@ class GenresViewModel : ViewModel() {
         fetchGenres()
     }
 
-    private fun _fetchGenres(result: BaseApiResponse<List<GenreModel>>) {
+    private fun fetchGenresResult(result: BaseApiResponse<List<GenreModel>>) {
         when (result) {
             is BaseApiResponse.Success -> {
-                var genres = result.data
+                val genres = result.data
                 Log.i("Jumlah Genres", genres.size.toString())
                 _state.value = GenresState.Success(genres)
             }
